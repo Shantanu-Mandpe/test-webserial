@@ -94,7 +94,7 @@ const useConnectionStore = defineStore({
       try{
         console.log('Connecting to GATT Server...');
         this.bleDevice.addEventListener('gattserverdisconnected', this.onDisconnected);
-        server = await device.gatt.connect();
+        const server = await device.gatt.connect();
 
         console.log('Locate NUS service');
         this.nusService = server.getPrimaryService(bleNusServiceUUID);
