@@ -126,7 +126,7 @@ const useConnectionStore = defineStore({
     },
 
     onDisconnected(){
-      console.log(this.bleDevice.id + ' disconnect')
+      console.log(this.bleDevice.name + ' & ' + this.bleDevice.id + ': disconnect')
       this.bleConnected = false
     },
 
