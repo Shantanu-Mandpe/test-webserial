@@ -94,19 +94,19 @@ const useConnectionStore = defineStore({
       try{
         console.log('Connecting to GATT Server...');
         this.bleDevice.addEventListener('gattserverdisconnected', this.onDisconnected);
-        const server = await device.gatt.connect();
+        let bleServer  = await device.gatt.connect();
 
         console.log('Locate NUS service');
-        this.nusService = server.getPrimaryService(bleNusServiceUUID);
-        console.log('Found NUS service: ' + this.nusService.uuid);
+        const nusService = await bleServer.getPrimaryService(bleNusServiceUUID);
+        console.log('Found NUS service: ' + nusService.uuid);
 
         console.log('Locate RX characteristic');
-        const characteristic1 = this.nusService.getCharacteristic(bleNusCharRXUUID);
+        const characteristic1 = await nusService.getCharacteristic(bleNusCharRXUUID);
         this.rxCharacteristic = characteristic1;
         console.log('Found RX characteristic');
 
         console.log('Locate TX characteristic');
-        const characteristic2 = this.nusService.getCharacteristic(bleNusCharTXUUID);
+        const characteristic2 = await nusService.getCharacteristic(bleNusCharTXUUID);
         this.txCharacteristic = characteristic2;
         console.log('Found TX characteristic');
 
@@ -116,6 +116,7 @@ const useConnectionStore = defineStore({
         console.log('Notifications started');
 
         this.bleConnected = true;
+        this.monitor()
       } catch (error) {
         console.log('' + error);
         if (device && device.gatt.connected) {
@@ -172,14 +173,13 @@ const useConnectionStore = defineStore({
       // this.vendor = info.vendor
       // this.product = info.product
       // this.physicallyConnected = true
-      
       if(!this.bleDevice) {
         window.location.search = ``
         return;
       } 
       this.id = bid
       this.name = this.bleDevice.name
-      console.log(this.name)
+      console.log("initialize " + this.name)
       console.log(this.id)
 
       // // notification for a USB device getting physically connected

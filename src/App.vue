@@ -35,7 +35,7 @@ function inputKeydown(e) {
   // console.log(keyCombo(e), e)
   switch (keyCombo(e)) {
     case shortcuts.CLEAR:
-      e.preventDefault()
+      e.preventDefault()  // Cancel the default action to avoid it being handled twice
       connection.messages.length = 0
       return true // say that it has been handled
     case shortcuts.IGNORE_LF:
@@ -82,6 +82,7 @@ function setInputValue(target, value) {
   document.execCommand('insertText', false, value)
 }
 /*chnaged because no need for pid and vid just need bid */
+/*dont completely understand the necessity of an onMounted fucntion, everything can be done in just bleConnected() */
 onMounted(async () => {
   const qs = new URLSearchParams(window.location.search);
   // if (qs.get('vid') && qs.get('pid')) {
@@ -103,12 +104,13 @@ onMounted(async () => {
   resizeObserver.observe(outputDiv);
 
   window.addEventListener('keydown', async (e) => {  /* */
-    if (keyCombo(e) === shortcuts.TOGGLE_CONNECTION) {
+    if (keyCombo(e) === shortcuts.TOGGLE_CONNECTION) { 
+      /*dont rlly need connection_toggle because there is no start of readable stream  */
       e.preventDefault();
       e.stopPropagation();
       // connection.selectDevice()
       if (!connection.bleConnected)
-        await connection.monitor()
+         connection.monitor()
       else
         await connection.bleDisconnect()
     }
