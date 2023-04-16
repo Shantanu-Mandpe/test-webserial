@@ -86,10 +86,10 @@ const useConnectionStore = defineStore({
 
       this.bleID = device.id
 
-      // const bleDevices = await navigator.bluetooth.getDevices()
-      // console.log(bleDevices)
-      // this.bleDevice = bleDevices.find((port) => port.id === id)
-      this.bleDevice = device   
+      const bleDevices = await navigator.bluetooth.getDevices()
+      console.log(bleDevices)
+      this.bleDevice = bleDevices.find((port) => port.id === id)
+      // this.bleDevice = device   
 
       try{
         console.log('Connecting to GATT Server...');
