@@ -127,7 +127,7 @@ function consoleScroll(e) {
 <template>
   <header>
     <h1>
-      <a href="https://webserial.io">WebSerial</a>
+      <a href="https://webserial.io">WebSerial (Modified)</a>
     </h1>
     <span id="cred"> by <a href="https://github.com/williamkapke" target="_blank">William Kapke</a></span>
     <aside>
