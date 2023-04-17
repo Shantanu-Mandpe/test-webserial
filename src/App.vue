@@ -83,6 +83,8 @@ function setInputValue(target, value) {
 }
 /*chnaged because no need for pid and vid just need bid */
 /*dont completely understand the necessity of an onMounted fucntion, everything can be done in just bleConnected() */
+/*when a Vue.js component is "mounted", it means that it has been created and rendered as 
+HTML elements in the web page's DOM, and it is now visible and accessible to the user. */
 onMounted(async () => {
   const qs = new URLSearchParams(window.location.search);
   // if (qs.get('vid') && qs.get('pid')) {

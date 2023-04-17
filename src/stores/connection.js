@@ -10,7 +10,7 @@ const vid_pid = (port) => {
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const bleNusServiceUUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const bleNusServiceUUID ='00002a37-0000-1000-8000-00805f9b34fb'; //'6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const bleNusCharRXUUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 const bleNusCharTXUUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 const MTU = 20;
@@ -54,10 +54,10 @@ const useConnectionStore = defineStore({
   actions: {
     selectDevice() {
       if (this.bleConnected) {
-        console.log('Gone into disconnect()')
+        console.log('Gone into disconnect()');
         this.bleDisconnect();
       } else {
-        console.log('Gone into connect()')
+        console.log('Gone into connect()');
         this.bleConnect();
       }
     },
@@ -84,12 +84,12 @@ const useConnectionStore = defineStore({
       // window.location.search = `?bid=${device.id}`
       // alert(window.search.location)
 
-      this.bleID = device.id
+      this.bleID = device.id;
 
-      const bleDevices = await navigator.bluetooth.getDevices()
-      console.log(bleDevices)
-      this.bleDevice = bleDevices.find((port) => port.id === id)
-      // this.bleDevice = device   
+      // const bleDevices = await navigator.bluetooth.getDevices();
+      // console.log(bleDevices);
+      // this.bleDevice = bleDevices.find((port) => port.id === id);
+      this.bleDevice = device;
 
       try{
         console.log('Connecting to GATT Server...');
@@ -116,7 +116,7 @@ const useConnectionStore = defineStore({
         console.log('Notifications started');
 
         this.bleConnected = true;
-        this.monitor()
+        this.monitor();
       } catch (error) {
         console.log('' + error);
         if (device && device.gatt.connected) {
@@ -126,8 +126,8 @@ const useConnectionStore = defineStore({
     },
 
     onDisconnected(){
-      console.log(this.bleDevice.name + ' & ' + this.bleDevice.id + ': disconnect')
-      this.bleConnected = false
+      console.log(this.bleDevice.name + ' & ' + this.bleDevice.id + ': disconnect');
+      this.bleConnected = false;
     },
 
     async bleDisconnect(){
@@ -174,13 +174,13 @@ const useConnectionStore = defineStore({
       // this.product = info.product
       // this.physicallyConnected = true
       if(!this.bleDevice) {
-        window.location.search = ``
+        window.location.search = ``;
         return;
       } 
-      this.id = bid
-      this.name = this.bleDevice.name
-      console.log("initialize " + this.name)
-      console.log(this.id)
+      this.id = bid;
+      this.name = this.bleDevice.name;
+      console.log("initialize " + this.name);
+      console.log(this.id);
 
       // // notification for a USB device getting physically connected
       // const onconnect = (e) => {
@@ -215,8 +215,8 @@ const useConnectionStore = defineStore({
       for (let i = 0; i < value.byteLength; i++) {
         str += String.fromCharCode(value.getUint8(i));
       }
-      alert(str)
-      this.messages.push(str)
+      alert(str);
+      this.messages.push(str);
     },
 
     sendNextChunk(a) {
@@ -232,7 +232,7 @@ const useConnectionStore = defineStore({
     write(s) {
       if (this.bleDevice && this.bleDevice.gatt.connected) {
         console.log("send: " + s);
-        let val_arr = new Uint8Array(s.length)
+        let val_arr = new Uint8Array(s.length);
         for (let i = 0; i < s.length; i++) {
           let val = s[i].charCodeAt(0);
           val_arr[i] = val;
