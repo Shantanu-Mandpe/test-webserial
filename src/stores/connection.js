@@ -10,7 +10,7 @@ const vid_pid = (port) => {
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const bleNusServiceUUID ='00002a37-0000-1000-8000-00805f9b34fb'; //'6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const bleNusServiceUUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const bleNusCharRXUUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 const bleNusCharTXUUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 const MTU = 20;
@@ -97,23 +97,25 @@ const useConnectionStore = defineStore({
         let bleServer  = await device.gatt.connect();
 
         console.log('Locate NUS service');
-        const nusService = await bleServer.getPrimaryService(bleNusServiceUUID);
+        const nusService = await bleServer.getPrimaryService(/*bleNusServiceUUID*/'0000180D-0000-1000-8000-00805f9b34fb');
         console.log('Found NUS service: ' + nusService.uuid);
+
+        console.log('Locate TX characteristic');
+        const characteristic2 = await nusService.getCharacteristic(/*bleNusCharTXUUID*/'00002A37-0000-1000-8000-00805f9b34fb');
+        this.txCharacteristic = characteristic2;
+        console.log('Found TX characteristic');
 
         console.log('Locate RX characteristic');
         const characteristic1 = await nusService.getCharacteristic(bleNusCharRXUUID);
         this.rxCharacteristic = characteristic1;
         console.log('Found RX characteristic');
 
-        console.log('Locate TX characteristic');
-        const characteristic2 = await nusService.getCharacteristic(bleNusCharTXUUID);
-        this.txCharacteristic = characteristic2;
-        console.log('Found TX characteristic');
-
         console.log('Enable notifications');
         const start = await this.txCharacteristic.startNotifications();
 
         console.log('Notifications started');
+        this.txCharacteristic.addEventListener('characteristicvaluechanged',
+          this.handleNotifications);
 
         this.bleConnected = true;
         this.monitor();
@@ -201,11 +203,6 @@ const useConnectionStore = defineStore({
       
     },
 
-    monitor() {
-      this.txCharacteristic.addEventListener('characteristicvaluechanged',
-        this.handleNotifications);
-    },
-
     handleNotifications(e){
       console.log('notification');
       let value = e.target.value;
@@ -219,9 +216,20 @@ const useConnectionStore = defineStore({
       this.messages.push(str);
     },
 
+    monitor() {
+      if (this.bleDevice && this.bleDevice.gatt.connected){
+        let value = this.txCharacteristic.readValue();
+        const decoded = decoder.decode(value);
+        console.log('read complete:', decoded, value, done);
+        this.messages.push(decoded);
+      } else {
+        alert('Not connected to a device yet.');
+      } 
+    },
+
     sendNextChunk(a) {
       let chunk = a.slice(0, MTU);
-      rxCharacteristic.writeValue(chunk)
+      rxCharacteristic.writeValueWithoutResponse(chunk)
         .then(function () {
           if (a.length > MTU) {
             sendNextChunk(a.slice(MTU));
@@ -237,7 +245,7 @@ const useConnectionStore = defineStore({
           let val = s[i].charCodeAt(0);
           val_arr[i] = val;
         }
-        sendNextChunk(val_arr);
+        sendNextChunk(encoder.encode(val_arr));
       } else {
         alert('Not connected to a device yet.');
       }
