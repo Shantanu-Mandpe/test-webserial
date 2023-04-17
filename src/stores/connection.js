@@ -54,10 +54,10 @@ const useConnectionStore = defineStore({
   actions: {
     selectDevice() {
       if (this.bleConnected) {
-        console.log('Gone into disconnect()');
+        console.log('BLE Connecting...');
         this.bleDisconnect();
       } else {
-        console.log('Gone into connect()');
+        console.log('BLE Disconnecting...');
         this.bleConnect();
       }
     },
@@ -79,7 +79,6 @@ const useConnectionStore = defineStore({
         acceptAllDevices: true //A boolean value indicating that the requesting script can accept all Bluetooth devices
       })
       alert('Found ' + device.name + ' ' + device.id);
-      console.log('reached1');
 
       // window.location.search = `?bid=${device.id}`
       // alert(window.search.location)
@@ -97,11 +96,11 @@ const useConnectionStore = defineStore({
         let bleServer  = await device.gatt.connect();
 
         console.log('Locate NUS service');
-        const nusService = await bleServer.getPrimaryService(/*bleNusServiceUUID*/'0000180D-0000-1000-8000-00805f9b34fb');
+        const nusService = await bleServer.getPrimaryService(bleNusServiceUUID/*'0000180D-0000-1000-8000-00805f9b34fb'*/);
         console.log('Found NUS service: ' + nusService.uuid);
 
         console.log('Locate TX characteristic');
-        const characteristic2 = await nusService.getCharacteristic(/*bleNusCharTXUUID*/'00002A37-0000-1000-8000-00805f9b34fb');
+        const characteristic2 = await nusService.getCharacteristic(bleNusCharTXUUID/*'00002A37-0000-1000-8000-00805f9b34fb'*/);
         this.txCharacteristic = characteristic2;
         console.log('Found TX characteristic');
 
